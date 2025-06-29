@@ -2,17 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.GrowAssignment" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/sky_blue_primary</item>
-        <item name="colorPrimaryVariant">@color/sky_blue_primary_variant</item>
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryVariant">@color/primary_green_variant</item>
         <item name="colorOnPrimary">@color/white</item>
         
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/sky_blue_secondary</item>
-        <item name="colorSecondaryVariant">@color/sky_blue_secondary_variant</item>
+        <item name="colorSecondary">@color/secondary_green</item>
+        <item name="colorSecondaryVariant">@color/accent_green</item>
         <item name="colorOnSecondary">@color/text_primary</item>
         
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/sky_blue_primary</item>
+        <item name="android:statusBarColor">@color/primary_green</item>
         <item name="android:windowLightStatusBar">false</item>
         
         <!-- Background colors -->
@@ -24,6 +24,9 @@
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_hint</item>
+        
+        <!-- Ripple effect -->
+        <item name="colorControlHighlight">@color/ripple_color</item>
     </style>
 
     <style name="Theme.GrowAssignment" parent="Base.Theme.GrowAssignment" />

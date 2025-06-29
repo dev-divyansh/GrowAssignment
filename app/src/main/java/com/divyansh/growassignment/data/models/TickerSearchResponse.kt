@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TickerSearchResponse(
     @SerializedName("bestMatches")
-    val bestMatches: List<TickerMatchDto>
+    val bestMatches: List<TickerMatchDto>? = emptyList()
 )
 
 data class TickerMatchDto(

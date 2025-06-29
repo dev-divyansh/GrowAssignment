@@ -4,18 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/sky_blue_secondary"
-    app:strokeWidth="1dp"
-    app:cardBackgroundColor="@color/surface">
+    android:layout_margin="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/border_color"
+    app:strokeWidth="0.5dp"
+    app:cardBackgroundColor="@color/card_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <!-- Stock Image and Symbol Row -->
         <LinearLayout
@@ -23,14 +26,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="12dp">
 
             <!-- Stock Image/Icon -->
             <ImageView
                 android:id="@+id/ivStockImage"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/stock_icon_background"
                 android:src="@drawable/ic_stock_default"
                 android:scaleType="centerCrop"
@@ -43,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="AAPL"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 tools:ignore="SmallSp" />
@@ -56,11 +59,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Apple Inc."
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:maxLines="2"
             android:ellipsize="end"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="12dp" />
 
         <!-- Price and Change Row -->
         <LinearLayout
@@ -76,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="$150.25"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
@@ -86,12 +89,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+$2.50"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="@color/positive_green"
                 android:background="@drawable/change_background_positive"
-                android:paddingHorizontal="6dp"
-                android:paddingVertical="2dp" />
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
 
         </LinearLayout>
 
@@ -101,9 +104,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+1.67%"
-            android:textSize="11sp"
+            android:textSize="12sp"
             android:textColor="@color/positive_green"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="6dp" />
 
     </LinearLayout>
 

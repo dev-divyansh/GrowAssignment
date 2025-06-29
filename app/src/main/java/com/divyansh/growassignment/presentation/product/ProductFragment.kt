@@ -28,7 +28,7 @@ class ProductFragment : Fragment() {
     private val viewModel: ProductViewModel by viewModels()
     private val watchlistViewModel: WatchlistViewModel by viewModels2()
     private var isInWatchlist: Boolean = false
-    private val apiKey = "YOUR_API_KEY" // Replace with your actual API key
+    private val apiKey = "E717D20RKD1G1H94" // Updated API key
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,57 +39,84 @@ class ProductFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val symbol = arguments?.getString("symbol") ?: return
+        val symbol = arguments?.getString("symbol")
+        if (symbol.isNullOrEmpty()) {
+            showError("Invalid stock symbol")
+            return
+        }
+        
         viewModel.loadCompany(symbol)
 
+        // Observe company state
         lifecycleScope.launch {
             viewModel.companyState.collect { state ->
-                when (state) {
-                    is CompanyUiState.Loading -> showLoading()
-                    is CompanyUiState.Success -> showCompany(state.data)
-                    is CompanyUiState.Error -> showError(state.message)
+                if (_binding != null) { // Check if binding is still valid
+                    when (state) {
+                        is CompanyUiState.Loading -> showLoading()
+                        is CompanyUiState.Success -> showCompany(state.data)
+                        is CompanyUiState.Error -> showError(state.message)
+                    }
                 }
             }
         }
 
         // Watchlist icon state
         lifecycleScope.launch {
-            watchlistViewModel.watchlists.collect { lists ->
-                isInWatchlist = lists.any { wl -> wl.stocks.any { it.symbol == symbol } }
-                binding.btnWatchlist.isSelected = isInWatchlist
+            try {
+                watchlistViewModel.watchlists.collect { lists ->
+                    if (_binding != null) { // Check if binding is still valid
+                        isInWatchlist = lists.any { wl -> wl.stocks.any { it.symbol == symbol } }
+                        binding.btnWatchlist.isSelected = isInWatchlist
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle watchlist state error silently
             }
         }
 
         binding.btnWatchlist.setOnClickListener {
-            if (isInWatchlist) {
-                // Remove from all watchlists
-                watchlistViewModel.watchlists.value.forEach { wl ->
-                    if (wl.stocks.any { it.symbol == symbol }) {
-                        watchlistViewModel.removeStockFromWatchlist(wl.id, symbol)
+            try {
+                if (isInWatchlist) {
+                    // Remove from all watchlists
+                    watchlistViewModel.watchlists.value.forEach { wl ->
+                        if (wl.stocks.any { it.symbol == symbol }) {
+                            watchlistViewModel.removeStockFromWatchlist(wl.id, symbol)
+                        }
                     }
+                    Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
+                } else {
+                    WatchlistPickerDialogFragment { watchlistId ->
+                        watchlistViewModel.addStockToWatchlist(watchlistId, symbol)
+                        Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
+                    }.show(parentFragmentManager, "watchlist_picker")
                 }
-                Toast.makeText(requireContext(), "Removed from Watchlist", Toast.LENGTH_SHORT).show()
-            } else {
-                WatchlistPickerDialogFragment { watchlistId ->
-                    watchlistViewModel.addStockToWatchlist(watchlistId, symbol)
-                    Toast.makeText(requireContext(), "Added to Watchlist", Toast.LENGTH_SHORT).show()
-                }.show(parentFragmentManager, "watchlist_picker")
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error updating watchlist", Toast.LENGTH_SHORT).show()
             }
         }
 
         // Observe price history for chart
         lifecycleScope.launch {
-            viewModel.priceHistory.collect { data ->
-                if (data.isNotEmpty()) {
-                    val entries = data.mapIndexed { idx, pair -> Entry(idx.toFloat(), pair.second) }
-                    val dataSet = LineDataSet(entries, "Price")
-                    dataSet.setDrawValues(false)
-                    dataSet.setDrawCircles(false)
-                    binding.lineChart.data = LineData(dataSet)
-                    binding.lineChart.invalidate()
-                    binding.lineChart.visibility = View.VISIBLE
-                } else {
-                    binding.lineChart.clear()
+            try {
+                viewModel.priceHistory.collect { data ->
+                    if (_binding != null) { // Check if binding is still valid
+                        if (data.isNotEmpty()) {
+                            val entries = data.mapIndexed { idx, pair -> Entry(idx.toFloat(), pair.second) }
+                            val dataSet = LineDataSet(entries, "Price")
+                            dataSet.setDrawValues(false)
+                            dataSet.setDrawCircles(false)
+                            binding.lineChart.data = LineData(dataSet)
+                            binding.lineChart.invalidate()
+                            binding.lineChart.visibility = View.VISIBLE
+                        } else {
+                            binding.lineChart.clear()
+                            binding.lineChart.visibility = View.GONE
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle chart error silently
+                if (_binding != null) {
                     binding.lineChart.visibility = View.GONE
                 }
             }
@@ -97,27 +124,49 @@ class ProductFragment : Fragment() {
     }
 
     private fun showLoading() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.contentScrollView.visibility = View.GONE
+        if (_binding != null) {
+            try {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.contentScrollView.visibility = View.GONE
+                binding.errorState.visibility = View.GONE
+            } catch (e: Exception) {
+                // Handle binding error
+            }
+        }
     }
 
     private fun showCompany(company: CompanyEntity) {
-        binding.progressBar.visibility = View.GONE
-        binding.contentScrollView.visibility = View.VISIBLE
+        if (_binding != null) {
+            try {
+                binding.progressBar.visibility = View.GONE
+                binding.contentScrollView.visibility = View.VISIBLE
+                binding.errorState.visibility = View.GONE
 
-        binding.tvSymbol.text = company.symbol
-        binding.tvName.text = company.name
-        binding.tvSector.text = company.sector
-        binding.tvMarketCap.text = "Market Cap: $${company.marketCap}"
-        binding.tvDescription.text = company.description
+                binding.tvSymbol.text = company.symbol
+                binding.tvName.text = company.name
+                binding.tvSector.text = company.sector
+                binding.tvMarketCap.text = "Market Cap: $${company.marketCap}"
+                binding.tvDescription.text = company.description
 
-        viewModel.loadPriceHistory(company.symbol, apiKey)
+                viewModel.loadPriceHistory(company.symbol, apiKey)
+            } catch (e: Exception) {
+                showError("Error displaying company data")
+            }
+        }
     }
 
     private fun showError(message: String) {
-        binding.progressBar.visibility = View.GONE
-        binding.contentScrollView.visibility = View.GONE
-        Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_LONG).show()
+        if (_binding != null) {
+            try {
+                binding.progressBar.visibility = View.GONE
+                binding.contentScrollView.visibility = View.GONE
+                binding.errorState.visibility = View.VISIBLE
+                binding.tvErrorMessage.text = message
+            } catch (e: Exception) {
+                // Handle error display failure
+                Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onDestroyView() {

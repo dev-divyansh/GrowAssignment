@@ -21,6 +21,8 @@ class WatchlistListAdapter(
     inner class WatchlistViewHolder(private val binding: ItemWatchlistBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(watchlist: WatchlistWithStocks) {
             binding.tvWatchlistName.text = watchlist.name
+            val stockCount = watchlist.stocks.size
+            binding.tvStockCount.text = if (stockCount == 1) "1 stock" else "$stockCount stocks"
             binding.root.setOnClickListener { onClick(watchlist.id) }
         }
     }

@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.core.os.bundleOf
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 
 @AndroidEntryPoint
 class ExploreFragment : Fragment() {
@@ -44,7 +45,10 @@ class ExploreFragment : Fragment() {
         setupClickListeners()
         observeViewModel()
         
-        viewModel.loadTopMovers(apiKey)
+        // Add a small delay to ensure the view is properly initialized
+        view.post {
+            viewModel.loadTopMovers(apiKey)
+        }
     }
 
     private fun setupAdapters() {
@@ -91,14 +95,10 @@ class ExploreFragment : Fragment() {
                     binding.recyclerSearch.visibility = View.VISIBLE
                     binding.recyclerGainers.visibility = View.GONE
                     binding.recyclerLosers.visibility = View.GONE
-                    binding.btnViewAllGainers.visibility = View.GONE
-                    binding.btnViewAllLosers.visibility = View.GONE
                 } else {
                     binding.recyclerSearch.visibility = View.GONE
                     binding.recyclerGainers.visibility = View.VISIBLE
                     binding.recyclerLosers.visibility = View.VISIBLE
-                    binding.btnViewAllGainers.visibility = View.VISIBLE
-                    binding.btnViewAllLosers.visibility = View.VISIBLE
                 }
             }
             override fun afterTextChanged(s: Editable?) {}
@@ -106,17 +106,8 @@ class ExploreFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.btnViewAllGainers.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_exploreFragment_to_viewAllFragment,
-                bundleOf("type" to "gainer")
-            )
-        }
-        binding.btnViewAllLosers.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_exploreFragment_to_viewAllFragment,
-                bundleOf("type" to "loser")
-            )
+        binding.btnRetry.setOnClickListener {
+            viewModel.loadTopMovers(apiKey)
         }
     }
 
@@ -124,15 +115,30 @@ class ExploreFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.exploreState.collect { state ->
                 when (state) {
-                    is ExploreUiState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is ExploreUiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.errorState.visibility = View.GONE
+                        binding.recyclerGainers.visibility = View.VISIBLE
+                        binding.recyclerLosers.visibility = View.VISIBLE
+                        Log.d("ExploreFragment", "Loading state")
+                    }
                     is ExploreUiState.Success -> {
                         binding.progressBar.visibility = View.GONE
+                        binding.errorState.visibility = View.GONE
+                        binding.recyclerGainers.visibility = View.VISIBLE
+                        binding.recyclerLosers.visibility = View.VISIBLE
+                        Log.d("ExploreFragment", "Success state - Gainers: ${state.gainers.size}, Losers: ${state.losers.size}")
                         gainersAdapter.submitList(state.gainers)
                         losersAdapter.submitList(state.losers)
                     }
                     is ExploreUiState.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Failed: ${state.message}", Toast.LENGTH_SHORT).show()
+                        binding.errorState.visibility = View.VISIBLE
+                        binding.recyclerGainers.visibility = View.GONE
+                        binding.recyclerLosers.visibility = View.GONE
+                        binding.tvErrorMessage.text = state.message
+                        Log.e("ExploreFragment", "Error state: ${state.message}")
+                        Toast.makeText(requireContext(), "Failed to load data: ${state.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -140,6 +146,7 @@ class ExploreFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.searchResults.collect { results ->
+                Log.d("ExploreFragment", "Search results updated: ${results.size} items")
                 searchAdapter.submitList(results)
             }
         }
