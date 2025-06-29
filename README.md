@@ -1,6 +1,9 @@
 ﻿#Grow Internship App
 ## 🚀 Features
 
+
+- ALERT : I have directly added api keys (free ) which has 25 request per day. ( I know its not recommended for production usecase, its just done for testing and assignment purpose )
+
 ### 📊 **Explore Screen**
 - **Top Gainers & Losers**: Real-time display of stocks with highest gains and losses
 - **Stock Search**: Search for stocks by company name or ticker symbol
