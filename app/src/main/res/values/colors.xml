@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Sky Blue Theme Colors -->
+    <color name="sky_blue_primary">#87CEEB</color>
+    <color name="sky_blue_primary_dark">#5F9EA0</color>
+    <color name="sky_blue_primary_variant">#4682B4</color>
+    <color name="sky_blue_secondary">#B0E0E6</color>
+    <color name="sky_blue_secondary_variant">#87CEEB</color>
+    
+    <!-- Background Colors -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F8F9FA</color>
+    <color name="surface">#FFFFFF</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    
+    <!-- Status Colors -->
+    <color name="positive_green">#4CAF50</color>
+    <color name="negative_red">#F44336</color>
+    <color name="neutral_gray">#9E9E9E</color>
+</resources>
