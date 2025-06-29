@@ -31,7 +31,6 @@ class ExploreFragment : Fragment() {
     private lateinit var gainersAdapter: TopMoverAdapter
     private lateinit var losersAdapter: TopMoverAdapter
     private lateinit var searchAdapter: StockAdapter
-    private val apiKey = "E717D20RKD1G1H94"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
@@ -47,7 +46,7 @@ class ExploreFragment : Fragment() {
         
         // Add a small delay to ensure the view is properly initialized
         view.post {
-            viewModel.loadTopMovers(apiKey)
+            viewModel.loadTopMovers()
         }
     }
 
@@ -91,7 +90,7 @@ class ExploreFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s?.toString()?.trim() ?: ""
                 if (query.isNotEmpty()) {
-                    viewModel.searchTickers(query, apiKey)
+                    viewModel.searchTickers(query)
                     binding.recyclerSearch.visibility = View.VISIBLE
                     binding.recyclerGainers.visibility = View.GONE
                     binding.recyclerLosers.visibility = View.GONE
@@ -107,7 +106,7 @@ class ExploreFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnRetry.setOnClickListener {
-            viewModel.loadTopMovers(apiKey)
+            viewModel.loadTopMovers()
         }
     }
 

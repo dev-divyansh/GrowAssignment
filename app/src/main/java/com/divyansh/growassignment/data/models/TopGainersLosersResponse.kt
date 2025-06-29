@@ -6,8 +6,22 @@ data class TopGainersLosersResponse(
     @SerializedName("top_gainers")
     val top_gainers: List<TopMoverDto>? = emptyList(),
     @SerializedName("top_losers")
-    val top_losers: List<TopMoverDto>? = emptyList()
-)
+    val top_losers: List<TopMoverDto>? = emptyList(),
+    @SerializedName("Information")
+    val information: String? = null,
+    @SerializedName("Note")
+    val note: String? = null,
+    @SerializedName("Error Message")
+    val apiErrorMessage: String? = null
+) {
+    fun hasError(): Boolean {
+        return !information.isNullOrBlank() || !note.isNullOrBlank() || !apiErrorMessage.isNullOrBlank()
+    }
+    
+    fun getErrorMessage(): String {
+        return information ?: note ?: apiErrorMessage ?: "Unknown error"
+    }
+}
 
 data class TopMoverDto(
     @SerializedName("ticker")

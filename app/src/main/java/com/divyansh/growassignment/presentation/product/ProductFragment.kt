@@ -18,6 +18,7 @@ import androidx.fragment.app.viewModels as viewModels2
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import android.util.Log
 
 @AndroidEntryPoint
 class ProductFragment : Fragment() {
@@ -28,7 +29,6 @@ class ProductFragment : Fragment() {
     private val viewModel: ProductViewModel by viewModels()
     private val watchlistViewModel: WatchlistViewModel by viewModels2()
     private var isInWatchlist: Boolean = false
-    private val apiKey = "E717D20RKD1G1H94" // Updated API key
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +45,7 @@ class ProductFragment : Fragment() {
             return
         }
         
+        setupChart()
         viewModel.loadCompany(symbol)
 
         // Observe company state
@@ -101,13 +102,7 @@ class ProductFragment : Fragment() {
                 viewModel.priceHistory.collect { data ->
                     if (_binding != null) { // Check if binding is still valid
                         if (data.isNotEmpty()) {
-                            val entries = data.mapIndexed { idx, pair -> Entry(idx.toFloat(), pair.second) }
-                            val dataSet = LineDataSet(entries, "Price")
-                            dataSet.setDrawValues(false)
-                            dataSet.setDrawCircles(false)
-                            binding.lineChart.data = LineData(dataSet)
-                            binding.lineChart.invalidate()
-                            binding.lineChart.visibility = View.VISIBLE
+                            updateChart(data)
                         } else {
                             binding.lineChart.clear()
                             binding.lineChart.visibility = View.GONE
@@ -120,6 +115,58 @@ class ProductFragment : Fragment() {
                     binding.lineChart.visibility = View.GONE
                 }
             }
+        }
+    }
+
+    private fun setupChart() {
+        binding.lineChart.apply {
+            description.isEnabled = false
+            setTouchEnabled(true)
+            isDragEnabled = true
+            setScaleEnabled(true)
+            setPinchZoom(true)
+            setDrawGridBackground(false)
+            
+            xAxis.apply {
+                setDrawGridLines(false)
+                setDrawAxisLine(true)
+                setDrawLabels(false)
+            }
+            
+            axisLeft.apply {
+                setDrawGridLines(true)
+                setDrawAxisLine(true)
+                setDrawLabels(true)
+            }
+            
+            axisRight.isEnabled = false
+            legend.isEnabled = false
+        }
+    }
+
+    private fun updateChart(data: List<Pair<Long, Float>>) {
+        try {
+            val entries = data.mapIndexed { idx, pair -> 
+                Entry(idx.toFloat(), pair.second) 
+            }
+            
+            val dataSet = LineDataSet(entries, "Price").apply {
+                color = requireContext().getColor(android.R.color.holo_blue_dark)
+                setDrawValues(false)
+                setDrawCircles(false)
+                setDrawFilled(true)
+                fillColor = requireContext().getColor(android.R.color.holo_blue_light)
+                fillAlpha = 50
+                lineWidth = 2f
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+            }
+            
+            binding.lineChart.data = LineData(dataSet)
+            binding.lineChart.invalidate()
+            binding.lineChart.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            Log.e("ProductFragment", "Error updating chart", e)
+            binding.lineChart.visibility = View.GONE
         }
     }
 
@@ -148,7 +195,7 @@ class ProductFragment : Fragment() {
                 binding.tvMarketCap.text = "Market Cap: $${company.marketCap}"
                 binding.tvDescription.text = company.description
 
-                viewModel.loadPriceHistory(company.symbol, apiKey)
+                viewModel.loadPriceHistory(company.symbol)
             } catch (e: Exception) {
                 showError("Error displaying company data")
             }
