@@ -24,14 +24,14 @@ class WatchlistViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<WatchlistUiState>(WatchlistUiState.Idle)
     val uiState: StateFlow<WatchlistUiState> = _uiState.asStateFlow()
 
-    fun createWatchlist(name: String) {
-        viewModelScope.launch {
-            try {
-                repository.createWatchlist(name)
-                _uiState.value = WatchlistUiState.Success
-            } catch (e: Exception) {
-                _uiState.value = WatchlistUiState.Error(e.message ?: "Unknown error")
-            }
+    suspend fun createWatchlist(name: String): Long {
+        return try {
+            val watchlistId = repository.createWatchlist(name)
+            _uiState.value = WatchlistUiState.Success
+            watchlistId
+        } catch (e: Exception) {
+            _uiState.value = WatchlistUiState.Error(e.message ?: "Unknown error")
+            -1L
         }
     }
 

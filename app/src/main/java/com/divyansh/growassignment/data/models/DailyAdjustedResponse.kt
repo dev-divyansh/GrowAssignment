@@ -4,10 +4,24 @@ import com.google.gson.annotations.SerializedName
 
 data class DailyAdjustedResponse(
     @SerializedName("Meta Data")
-    val metaData: MetaData?,
+    val metaData: MetaData? = null,
     @SerializedName("Time Series (Daily Adjusted)")
-    val timeSeries: Map<String, DailyAdjustedData>?
-)
+    val timeSeries: Map<String, DailyAdjustedData>? = null,
+    @SerializedName("Information")
+    val information: String? = null,
+    @SerializedName("Note")
+    val note: String? = null,
+    @SerializedName("Error Message")
+    val apiErrorMessage: String? = null
+) {
+    fun hasError(): Boolean {
+        return !information.isNullOrBlank() || !note.isNullOrBlank() || !apiErrorMessage.isNullOrBlank()
+    }
+    
+    fun getErrorMessage(): String {
+        return information ?: note ?: apiErrorMessage ?: "Invalid price history data"
+    }
+}
 
 data class MetaData(
     @SerializedName("1. Information")

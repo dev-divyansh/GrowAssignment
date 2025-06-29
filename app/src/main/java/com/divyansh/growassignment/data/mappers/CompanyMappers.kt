@@ -5,11 +5,11 @@ import com.divyansh.growassignment.data.models.CompanyOverviewDto
 
 fun CompanyOverviewDto.toEntity(): CompanyEntity {
     return CompanyEntity(
-        symbol = symbol,
-        name = name,
-        sector = sector,
-        description = description,
-        marketCap = marketCap,
+        symbol = symbol ?: "Unknown",
+        name = name ?: "Unknown Company",
+        sector = sector ?: "Unknown Sector",
+        description = description ?: "No description available",
+        marketCap = marketCap ?: "0",
         lastUpdated = System.currentTimeMillis()
     )
 }

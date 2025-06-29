@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add to Watchlist"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         android:layout_marginBottom="20dp" />
@@ -23,13 +23,15 @@
         android:hint="New watchlist name"
         app:boxStrokeColor="@color/primary_green"
         app:hintTextColor="@color/primary_green"
+        app:boxStrokeWidth="2dp"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etNewWatchlistName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColor="@color/text_primary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -42,12 +44,31 @@
         android:textColor="@color/text_primary"
         android:layout_marginBottom="12dp" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_color"
+        android:layout_marginBottom="12dp" />
+
     <ListView
         android:id="@+id/lvWatchlists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:divider="@color/divider_color"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:background="@color/background_primary"
+        android:scrollbars="none" />
+
+    <TextView
+        android:id="@+id/tvNoWatchlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No existing watchlists. Create a new one above."
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone" />
 
 </LinearLayout> 
